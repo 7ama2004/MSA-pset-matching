@@ -112,21 +112,21 @@ def remove_enrollment(id):
     db.session.commit()
     return redirect(url_for('index'))
 
-
-@app.route('/check_name', methods=['POST'])
-def check_name():
+@app.route('/check_kerb', methods=['POST'])
+def check_kerb():
     data = request.json
-    name = data['name']
-    student = Student.query.filter_by(name=name).first()
+    kerb = data['kerb']
+    student = Student.query.get(kerb)
     return jsonify({'exists': student is not None})
 
-@app.route('/exists')
-def exists():
-    return render_template('exists.html')
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
 
-@app.route('/not_exists')
-def not_exists():
-    return render_template('not_exists.html')
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

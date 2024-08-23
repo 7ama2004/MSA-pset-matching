@@ -49,31 +49,32 @@
     </style>
 </head>
 <body>
-    <h1>Enter Your Name</h1>
-    <form id="nameForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
+    <h1>Salaam! Welcome to the MSA Pset Partners<h1>
+    <h2>To proceed, please enter your kerb.</h1>
+    <form id="kerbForm">
+        <label for="kerb">Kerb:</label>
+        <input type="text" id="kerb" name="kerb" required>
         <input type="submit" value="Submit">
     </form>
 
     <script>
-        document.getElementById('nameForm').addEventListener('submit', function(event) {
+        document.getElementById('kerbForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const name = document.getElementById('name').value;
+            const kerb = document.getElementById('kerb').value;
 
-            fetch('/check_name', {
+            fetch('/check_kerb', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: name })
+                body: JSON.stringify({ kerb: kerb })
             })
             .then(response => response.json())
             .then(result => {
                 if (result.exists) {
-                    window.location.href = '/exists';
+                    window.location.href = '/dashboard';
                 } else {
-                    window.location.href = '/not_exists';
+                    window.location.href = '/signup';
                 }
             })
             .catch(error => {
