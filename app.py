@@ -105,5 +105,28 @@ def enroll():
 
     return redirect(url_for('index'))
 
+@app.route('/remove_enrollment/<int:id>')
+def remove_enrollment(id):
+    enrollment = Enrollment.query.get_or_404(id)
+    db.session.delete(enrollment)
+    db.session.commit()
+    return redirect(url_for('index'))
+
+
+@app.route('/check_name', methods=['POST'])
+def check_name():
+    data = request.json
+    name = data['name']
+    student = Student.query.filter_by(name=name).first()
+    return jsonify({'exists': student is not None})
+
+@app.route('/exists')
+def exists():
+    return render_template('exists.html')
+
+@app.route('/not_exists')
+def not_exists():
+    return render_template('not_exists.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

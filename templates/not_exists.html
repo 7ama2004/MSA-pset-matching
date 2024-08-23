@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Add Student</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,32 +49,46 @@
     </style>
 </head>
 <body>
-    <h1>Enter Your Name</h1>
-    <form id="nameForm">
+    <h1>Add Student</h1>
+    <form id="studentForm">
+        <label for="kerb">Kerb:</label>
+        <input type="text" id="kerb" name="kerb" required>
+
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
+
+        <label for="dorm">Dorm:</label>
+        <input type="text" id="dorm" name="dorm" required>
+
+        <label for="enrollments">Enrollments:</label>
+        <input type="text" id="enrollments" name="enrollments" required>
+
         <input type="submit" value="Submit">
     </form>
 
     <script>
-        document.getElementById('nameForm').addEventListener('submit', function(event) {
+        document.getElementById('studentForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            const name = document.getElementById('name').value;
+            
+            const formData = new FormData(this);
+            const data = {
+                kerb: formData.get('kerb'),
+                name: formData.get('name'),
+                dorm: formData.get('dorm'),
+                enrollments: formData.get('enrollments')
+            };
 
-            fetch('/check_name', {
+            fetch('/add_student', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: name })
+                body: JSON.stringify(data)
             })
             .then(response => response.json())
             .then(result => {
-                if (result.exists) {
-                    window.location.href = '/exists';
-                } else {
-                    window.location.href = '/not_exists';
-                }
+                alert(result.message);
+                document.getElementById('studentForm').reset();
             })
             .catch(error => {
                 console.error('Error:', error);
