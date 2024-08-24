@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.db'
 db = SQLAlchemy(app)
 
@@ -9,7 +10,7 @@ class Student(db.Model):
     kerb = db.Column(db.String(50), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     dorm = db.Column(db.String(100), nullable=False)
-    enrollments = db.Column(db.String(200), nullable=False)
+    enrollments = db.relationship('Enrollment', backref='student', lazy=True)
 
     def __repr__(self):
         return f'<Student {self.name}>'
@@ -18,8 +19,7 @@ class Class(db.Model):
     number = db.Column(db.String(50), primary_key=True)
     enrollments = db.relationship('Enrollment', backref='class_', lazy=True)
 
-    def __repr__(self):
-        return f'<Student {self.name}>'
+
 
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,16 +35,50 @@ def index():
 
 @app.route('/add_student', methods=['POST'])
 def add_student():
+    # Use .get() method to avoid KeyError and provide default values
     data = request.json
-    new_student = Student(
-        kerb=data['kerb'],
-        name=data['name'],
-        dorm=data['dorm'],
-        enrollments=data['enrollments']
-    )
+    print(data)
+    kerb = data['kerb']
+    name = data['name']
+    dorm = data['dorm']
+    student = Student.query.get(kerb)
+
+    if student:
+        print('fraud detected')
+        session['error_message'] = 'This student already exists.'
+        return jsonify({'message': 'This student already exists.', 'kerb': kerb})
+    
+    # classes = classes.split()
+    new_student = Student(kerb=kerb, name=name, dorm=dorm)
+    print('new student', new_student.enrollments)
     db.session.add(new_student)
     db.session.commit()
-    return jsonify({'message': 'Student added successfully!'})
+    return jsonify({'message': 'Student added successfully.', 'kerb': kerb})
+
+
+
+# @app.route('/add_student', methods=['POST'])
+# def add_student():
+    kerb = request.form['kerb']
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    email = request.form['email']
+
+    student = Student.query.get(kerb)
+    if student:
+        session['error_message'] = 'This student already exists.'  # Set error message in session
+        # raise Error
+        return redirect(url_for('index'))
+
+    new_student = Student(kerb=kerb, first_name=first_name, last_name=last_name, email=email)
+    try:
+        db.session.add(new_student)
+        db.session.commit()
+        return redirect(url_for('index'))
+    except IntegrityError:
+        db.session.rollback()
+        session['error_message'] = 'Error occurred while adding student.'
+        return redirect(url_for('index'))
 
 @app.route('/get_student/<string:kerb>', methods=['GET'])
 def get_student(kerb):
@@ -121,7 +155,10 @@ def check_kerb():
 
 @app.route('/dashboard')
 def dashboard():
-    return render_template('dashboard.html')
+    kerb = request.args.get('kerb')
+    print(f"Received kerb: {kerb}")  # Debugging line
+    return render_template('dashboard.html', kerb=kerb)
+
 
 @app.route('/signup')
 def signup():

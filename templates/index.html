@@ -49,6 +49,9 @@
     </style>
 </head>
 <body>
+    <div style="text-align: center;">
+        <img id="logo" src="/static/msalogo.png" alt="Logo" style="width: 300px; height: auto;">
+      </div>
     <h1>Salaam! Welcome to the MSA Pset Partners<h1>
     <h2>To proceed, please enter your kerb.</h1>
     <form id="kerbForm">
@@ -72,9 +75,10 @@
             .then(response => response.json())
             .then(result => {
                 if (result.exists) {
-                    window.location.href = '/dashboard';
+                    window.location.href = `/dashboard/?kerb=${encodeURIComponent(result.kerb)}`;
                 } else {
-                    window.location.href = '/signup';
+                    window.location.href = `/signup`;
+
                 }
             })
             .catch(error => {

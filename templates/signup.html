@@ -47,11 +47,34 @@
             background-color: #45a049;
         }
     </style>
+        <script>
+            // Function to get query parameters from URL
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+    
+            // Function to set default values based on URL parameters
+            function setDefaultValues() {
+                const kerbValue = getQueryParam('kerb'); // Get the 'kerb' parameter from the URL
+                if (kerbValue) {
+                    document.getElementById('kerb').value = decodeURIComponent(kerbValue);
+                }
+                // Similarly, you can get and set other parameters as needed
+            }
+    
+            // Set default values when the DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', setDefaultValues);
+        </script>
 </head>
 <body>
     <h1>Add Student</h1>
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}
     <form id="studentForm">
         <label for="kerb">Kerb:</label>
+<!-- value="defaultKerbValue"   default this to what--> 
         <input type="text" id="kerb" name="kerb" required>
 
         <label for="name">Name:</label>
@@ -60,8 +83,8 @@
         <label for="dorm">Dorm:</label>
         <input type="text" id="dorm" name="dorm" required>
 
-        <label for="enrollments">Enrollments:</label>
-        <input type="text" id="enrollments" name="enrollments" required>
+        <!-- <label for="enrollments">Enrollments:</label> -->
+        <!-- <input type="text" id="enrollments" name="enrollments" required> -->
 
         <input type="submit" value="Submit">
     </form>
@@ -75,26 +98,38 @@
                 kerb: formData.get('kerb'),
                 name: formData.get('name'),
                 dorm: formData.get('dorm'),
-                enrollments: formData.get('enrollments')
+                // enrollments: formData.get('enrollments')
             };
 
             fetch('/add_student', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(result => {
-                alert(result.message);
-                document.getElementById('studentForm').reset();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        window.location.href = '/dashboard';
-        });
-    </script>
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => response.json())
+.then(result => {
+    console.log('Response:', result);
+    if (result.message === 'Student added successfully.') {
+        alert(result.message);
+        document.getElementById('studentForm').reset();
+        // Redirect to the dashboard with kerb parameter if it is available
+        if (result.kerb) {
+            window.location.href = `/dashboard?kerb=${encodeURIComponent(result.kerb)}`;
+        } else {
+            window.location.href = '/dashboard'; // Redirect without kerb if it's not available
+        }
+    } else {
+        // Handle error cases
+        alert('Error: ' + result.message);
+    }
+})
+.catch(error => {
+    console.error('Error:', error);
+    alert('An unexpected error occurred.');
+});
+    });
+            </script>
 </body>
 </html>
