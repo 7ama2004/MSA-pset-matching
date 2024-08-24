@@ -19,8 +19,6 @@ class Class(db.Model):
     number = db.Column(db.String(50), primary_key=True)
     enrollments = db.relationship('Enrollment', backref='class_', lazy=True)
 
-
-
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     student_kerb = db.Column(db.String(10), db.ForeignKey('student.kerb'), nullable=False)
@@ -55,7 +53,10 @@ def add_student():
     db.session.commit()
     return jsonify({'message': 'Student added successfully.', 'kerb': kerb})
 
-
+@app.route('/dashboard')
+def show_classes():
+    classes = Class.query.all()
+    return render_template('dashboard.html', classes=classes)
 
 # @app.route('/add_student', methods=['POST'])
 # def add_student():
@@ -88,7 +89,6 @@ def get_student(kerb):
             'kerb': student.kerb,
             'name': student.name,
             'dorm': student.dorm,
-            'enrollments': student.enrollments
         })
     return jsonify({'message': 'Student not found!'})
 
@@ -114,19 +114,19 @@ def delete_student(kerb):
     return jsonify({'message': 'Student not found!'})
 
 
-
 @app.route('/add_class', methods=['POST'])
 def add_class():
-    number = request.form['number']
-    name = request.form['name']
-    instructor = request.form['instructor']
-    schedule = request.form['schedule']
+    data = request.json
+    class_number = data.get('class_number')
+    title = data.get('title')
 
-    new_class = Class(number=number, name=name, instructor=instructor, schedule=schedule)
+    if Class.query.get(class_number):
+        return jsonify({'success': False, 'message': 'Class number already exists.'})
+
+    new_class = Class(number=class_number)
     db.session.add(new_class)
     db.session.commit()
-
-    return redirect(url_for('index'))
+    return jsonify({'success': True})
 
 @app.route('/enroll', methods=['POST'])
 def enroll():
@@ -159,6 +159,24 @@ def dashboard():
     print(f"Received kerb: {kerb}")  # Debugging line
     return render_template('dashboard.html', kerb=kerb)
 
+@app.route('/update_class', methods=['POST'])
+def update_class():
+    data = request.json
+    print(data)
+
+    number = data.get('class_number')
+    field = data.get('field')
+    value = data.get('value')
+
+    class_ = Class.query.get_or_404(class_number)
+
+    if field == 'title':
+        class_.title = value
+    else:
+        return jsonify({'success': False})
+
+    db.session.commit()
+    return jsonify({'success': True})
 
 @app.route('/signup')
 def signup():

@@ -1,57 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        h1 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-top: 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Website</title>
+        
+        <link rel="stylesheet" href="../static/common.css">
+      </head>
 <body>
-    <div style="text-align: center;">
+    <!-- <div style="text-align: center;">
         <img id="logo" src="/static/msalogo.png" alt="Logo" style="width: 300px; height: auto;">
-      </div>
+      </div> -->
     <h1>Salaam! Welcome to the MSA Pset Partners<h1>
     <h2>To proceed, please enter your kerb.</h1>
     <form id="kerbForm">
@@ -75,7 +34,7 @@
             .then(response => response.json())
             .then(result => {
                 if (result.exists) {
-                    window.location.href = `/dashboard/?kerb=${encodeURIComponent(result.kerb)}`;
+                    window.location.href = `/dashboard?kerb=${encodeURIComponent(result.kerb)}`;
                 } else {
                     window.location.href = `/signup`;
 

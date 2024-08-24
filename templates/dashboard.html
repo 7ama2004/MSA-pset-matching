@@ -4,9 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="../static/common.css"> <!-- Link to the common stylesheet -->
+
 </head>
 <body>
-    <h1>Hello {{ kerb }}!</h1>
-    <p>Your name is in the database.</p>
+    <h1>Dashboard</h1>
+    <h1>Welcome {{ kerb }}</h1>
+    <table id="classTable">
+        <thead>
+            <tr>
+                <th>Class Number</th>
+                <!-- <th>Title</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for class_ in classes %}
+            <tr data-class-number="{{ class_.number }}">
+                <td>{{ class_.number }}</td>
+                <!-- <td class="editable" data-field="title" contenteditable="true">{{ class_.title }}</td> -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="form-container">
+        <h2>Add New Class</h2>
+        <form id="addClassForm">
+            <label for="classNumber">Class Number:</label>
+            <input type="text" id="classNumber" name="classNumber" required><br>
+
+            <button type="submit">Add Class</button>
+        </form>
+    </div>
+
+    <script>
+        document.querySelectorAll('.editable').forEach(cell => {
+            cell.addEventListener('blur', function() {
+                const classNumber = this.closest('tr').getAttribute('data-class-number');
+                const field = this.getAttribute('data-field');
+                const value = this.textContent;
+
+                fetch('/update_class', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        class_number: classNumber,
+                        field: field,
+                        value: value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Class updated successfully.');
+                    } else {
+                        alert('Error updating class.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating class.');
+                });
+            });
+        });
+
+        document.getElementById('addClassForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const classNumber = document.getElementById('classNumber').value;
+
+            fetch('/add_class', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    class_number: classNumber,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Class added successfully.');
+                    // Optionally reload the page or update the table dynamically
+                    location.reload(); // Reloads the page to show the new class
+                } else {
+                    alert('Error adding class. You likely already have the class.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding class.');
+            });
+        });
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.9)), /* Semi-transparent overlay */
+        url('/static/alchemist.png'); /* Background image */
+    background-repeat: repeat; /* Tiling the background image */
+    background-size: 150px auto; /* Resize width to 100px, height adjusts automatically */
+    background-position: top left; /* Position the background image */
+}
+
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Adds subtle shadow to the form */
+    background: white; /* Ensure the form background is solid to make text readable */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px; /* Adds space below the heading */
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"], /* Added for other input types */
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensure padding and border are included in element's total width and height */
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+table {
+    margin: 0 auto;
+    width: 30%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center; /* Aligns text to the left inside cells */
+
+}
+th {
+    background-color: #f4f4f4;
+    text-align: center; /* Center-aligns text inside header cells */
+
+}
+.editable {
+    cursor: pointer;
+}
